@@ -1438,7 +1438,11 @@ class Bloodhound(CmdBase):
                         domain_id = self.get_domain(properties)
 
                         full_name = properties.get('displayname', '')
-                        pwd_last_set = datetime.datetime.fromtimestamp(properties.get('pwdlastset', 0))
+                        try:
+                            pwd_last_set = datetime.datetime.fromtimestamp(properties.get('pwdlastset', 0))
+                        except OSError as e:
+                            print(f"Error parsing timestamp: {e}")
+                            pwd_last_set = None
                         enabled = bool(properties.get('enabled', True))
 
                         self.db.insert_or_update_credential(
